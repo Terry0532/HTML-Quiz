@@ -5,8 +5,8 @@ $(document).ready(function () {
     var changeQuestion = $("#question");
     var btnDiv = $("#btnDiv");
     var progressBarPercent = 100;
-    var countDownMinute = 2;
-    var countDownSecond = 0;
+    var countDownMinute = 0;
+    var countDownSecond = 2;
     var questionsAndAnswers = {
         questions: ["Inside which HTML element do we put the JavaScript?",
             "What is the correct JavaScript syntax to change the context of the HTML element below?",
@@ -103,6 +103,17 @@ $(document).ready(function () {
 
     });
 
+    $("#submitBtn").on("click", function (event) {
+        event.preventDefault();
+        var userName = $("#userName").val().trim();
+        var user = {
+            name: userName,
+            score: scoreCounter
+        }
+        localStorage.setItem("user", user);
+        console.log(user.name);
+    });
+
     //display timer and update progress bar
     var countDown = setInterval(function () {
         $("#timer").text(countDownMinute + "m" + countDownSecond + "s");
@@ -122,6 +133,7 @@ $(document).ready(function () {
         progressBarPercent = progressBarPercent - 0.03472;
     }, 41.6);
 
+    //show question's choices
     function displayChoices() {
         for (i = 0; i < questionsAndAnswers.choices[questionCounter].length; i++) {
             var addBtn = $("<button>");
@@ -144,6 +156,7 @@ $(document).ready(function () {
     function showScoreAndStoreName() {
         changeQuestion.text("Yout total score is " + scoreCounter);
         btnDiv.empty();
+        $("form").removeClass("d-none");
     }
 
 });
