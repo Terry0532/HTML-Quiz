@@ -4,6 +4,8 @@ $(document).ready(function () {
     var scoreCounter = 0;
     var changeQuestion = $("#question");
     var btnDiv = $("#btnDiv");
+    var scoreDiv = $("#userScores");
+    var clearBtnDiv = $("#clear");
     var progressBarPercent = 100;
     var countDownMinute = 0;
     var countDownSecond = 2;
@@ -84,10 +86,11 @@ $(document).ready(function () {
 
     //user click answer button
     btnDiv.on("click", ".userChoice", function () {
-
-        //check if this is the curect answer
+        //check if this is the currect answer
         if (questionsAndAnswers.answers[questionCounter] === $(this).val()) {
             scoreCounter++;
+        } else {
+
         }
 
         //go to next question
@@ -106,21 +109,28 @@ $(document).ready(function () {
             clearInterval(progressBar);
             showScoreAndStoreName();
         }
-
     });
 
+    //submit user score and name
     $("#submitBtn").on("click", function (event) {
         event.preventDefault();
-        allUserName.push($("#userName").val().trim());
-        allUserScore.push(scoreCounter);
-        localStorage.setItem("name", JSON.stringify(allUserName));
-        localStorage.setItem("score", JSON.stringify(allUserScore));
-        displayAllUsersScore();
+        if ($("#userName").val().trim() !== "") {
+            allUserName.push($("#userName").val().trim());
+            allUserScore.push(scoreCounter);
+            localStorage.setItem("name", JSON.stringify(allUserName));
+            localStorage.setItem("score", JSON.stringify(allUserScore));
+            displayAllUsersScore();
+        } else {
+            $("#userName").attr("placeholder", "Enter a name");
+            $("#userName").val("");
+        }
     });
 
-    function displayAllUsersScore() {
-        $("form").addClass("d-none");
-    }
+    //clear the local storage
+    clearBtnDiv.on("click", ".clearAll", function () {
+        localStorage.clear();
+        scoreDiv.empty();
+    });
 
     //display timer and update progress bar
     var countDown = setInterval(function () {
@@ -140,6 +150,19 @@ $(document).ready(function () {
         $(".progress-bar").css("width", progressBarPercent + "%");
         progressBarPercent = progressBarPercent - 0.03472;
     }, 41.6);
+
+    //show a list of user name and score. a button to clear all
+    function displayAllUsersScore() {
+        $("form").addClass("d-none");
+        changeQuestion.text("High scores");
+        for (i = 0; i < allUserName.length; i++) {
+            scoreDiv.append("<p>Name: " + allUserName[i] + "......" + "Score: " + allUserScore[i] + "</p>");
+        }
+        var clearAllBtn = $("<button>");
+        clearAllBtn.addClass("btn btn-primary clearAll");
+        clearAllBtn.text("Clear everything");
+        clearBtnDiv.append(clearAllBtn);
+    }
 
     //show question's choices
     function displayChoices() {
@@ -167,6 +190,7 @@ $(document).ready(function () {
         $("form").removeClass("d-none");
     }
 
+    //check local storage for user names and scores
     function init() {
         var storedName = JSON.parse(localStorage.getItem("name"));
         var storedScore = JSON.parse(localStorage.getItem("score"));
