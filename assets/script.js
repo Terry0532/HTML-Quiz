@@ -7,6 +7,8 @@ $(document).ready(function () {
     var progressBarPercent = 100;
     var countDownMinute = 0;
     var countDownSecond = 2;
+    var allUserName = [];
+    var allUserScore = [];
     var questionsAndAnswers = {
         questions: ["Inside which HTML element do we put the JavaScript?",
             "What is the correct JavaScript syntax to change the context of the HTML element below?",
@@ -64,6 +66,8 @@ $(document).ready(function () {
         }
     }
 
+    init();
+
     //start the quiz
     $("#startQuiz").on("click", function () {
 
@@ -98,6 +102,8 @@ $(document).ready(function () {
             changeQuestion.text(questionsAndAnswers.questions[questionCounter]);
             displayChoices();
         } else {
+            clearInterval(countDown);
+            clearInterval(progressBar);
             showScoreAndStoreName();
         }
 
@@ -105,14 +111,16 @@ $(document).ready(function () {
 
     $("#submitBtn").on("click", function (event) {
         event.preventDefault();
-        var userName = $("#userName").val().trim();
-        var user = {
-            name: userName,
-            score: scoreCounter
-        }
-        localStorage.setItem("user", user);
-        console.log(user.name);
+        allUserName.push($("#userName").val().trim());
+        allUserScore.push(scoreCounter);
+        localStorage.setItem("name", JSON.stringify(allUserName));
+        localStorage.setItem("score", JSON.stringify(allUserScore));
+        displayAllUsersScore();
     });
+
+    function displayAllUsersScore() {
+        $("form").addClass("d-none");
+    }
 
     //display timer and update progress bar
     var countDown = setInterval(function () {
@@ -157,6 +165,17 @@ $(document).ready(function () {
         changeQuestion.text("Yout total score is " + scoreCounter);
         btnDiv.empty();
         $("form").removeClass("d-none");
+    }
+
+    function init() {
+        var storedName = JSON.parse(localStorage.getItem("name"));
+        var storedScore = JSON.parse(localStorage.getItem("score"));
+        if (storedName !== null) {
+            allUserName = storedName;
+        }
+        if (storedScore !== null) {
+            allUserScore = storedScore;
+        }
     }
 
 });
