@@ -1,11 +1,9 @@
 $(document).ready(function () {
 
-    var questionCounter = 0;
+    var questionCounter = 24;
     var scoreCounter = 0;
     var changeQuestion = $("#question");
-    var startQuiz = $("#startQuiz");
     var btnDiv = $("#btnDiv");
-
     var questionsAndAnswers = {
         questions: ["Inside which HTML element do we put the JavaScript?",
             "What is the correct JavaScript syntax to change the context of the HTML element below?",
@@ -63,11 +61,43 @@ $(document).ready(function () {
         }
     }
 
-    startQuiz.on("click", function () {
+    //start the quiz
+    $("#startQuiz").on("click", function () {
+
+        //remove start button
         btnDiv.empty();
-        changeQuestion.html(questionsAndAnswers.questions[questionCounter]);
+
+        //display 1st quetion
+        changeQuestion.text(questionsAndAnswers.questions[questionCounter]);
+
+        //display 1st question's choices
         displayChoices();
-        console.log("question ", questionCounter + 1);
+
+    });
+
+    //user click answer button
+    btnDiv.on("click", ".userChoice", function () {
+
+        //check if this is the curect answer
+        if (questionsAndAnswers.answers[questionCounter] === $(this).val()) {
+            scoreCounter++;
+        }
+
+        //go to next question
+        questionCounter++;
+
+        //if this is not last question continue, else show score
+        if (questionCounter < 25) {
+            //remove previous choices
+            btnDiv.empty();
+
+            //display next question and choices
+            changeQuestion.text(questionsAndAnswers.questions[questionCounter]);
+            displayChoices();
+        } else {
+            showScoreAndStoreName();
+        }
+
     });
 
     function displayChoices() {
@@ -75,31 +105,23 @@ $(document).ready(function () {
             var addBtn = $("<button>");
             addBtn.addClass("btn btn-primary userChoice");
             addBtn.text(questionsAndAnswers.choices[questionCounter][i]);
+
+            //question 13's choices needs to be in html format in order to create 2 lines
             if (questionCounter === 13) {
                 addBtn.html(questionsAndAnswers.choices[questionCounter][i]);
             }
+
+            //add a value to the button for keep the score
             addBtn.val(i + 1);
+
             $("#btnDiv").append(addBtn);
         }
     }
 
-    btnDiv.on("click", ".userChoice", function () {
-        console.log(questionsAndAnswers.answers[questionCounter]);
-        console.log($(this).val());
-        if (questionsAndAnswers.answers[questionCounter] === $(this).val()) {
-            scoreCounter++;
-        }
-        questionCounter++;
-        btnDiv.empty();
-        changeQuestion.text(questionsAndAnswers.questions[questionCounter]);
-        displayChoices();
-        console.log("current score ", scoreCounter);
-        console.log("question ", questionCounter + 1);
-    });
-
     //display total score and show input and submit button
     function showScoreAndStoreName() {
-        console.log(questionsAndAnswers.choices[0][0]);
+        changeQuestion.text("Yout total score is " + scoreCounter);
+        btnDiv.empty();
     }
 
 });
