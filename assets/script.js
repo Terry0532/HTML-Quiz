@@ -1,16 +1,19 @@
 $(document).ready(function () {
 
-    var questionCounter = 24;
+    var questionCounter = 0;
     var scoreCounter = 0;
     var changeQuestion = $("#question");
     var btnDiv = $("#btnDiv");
     var scoreDiv = $("#userScores");
     var clearBtnDiv = $("#clear");
     var progressBarPercent = 100;
-    var countDownMinute = 0;
-    var countDownSecond = 2;
+    // var countDownMinute = 2;
+    // var countDownSecond = 0;
+    var timerCounter = 120;
     var allUserName = [];
     var allUserScore = [];
+    var countDown;
+    var progressBar;
     var questionsAndAnswers = {
         questions: ["Inside which HTML element do we put the JavaScript?",
             "What is the correct JavaScript syntax to change the context of the HTML element below?",
@@ -72,7 +75,6 @@ $(document).ready(function () {
 
     //start the quiz
     $("#startQuiz").on("click", function () {
-
         //remove start button
         btnDiv.empty();
 
@@ -82,6 +84,31 @@ $(document).ready(function () {
         //display 1st question's choices
         displayChoices();
 
+        //display timer and update progress bar
+        countDown = setInterval(function () {
+            // $("#timer").text(countDownMinute + "m" + countDownSecond + "s");
+            $("#timer").text(timerCounter + "s");
+            // countDownSecond--;
+            // if (countDownSecond < 0) {
+            //     countDownSecond = 59;
+            //     countDownMinute--;
+            // }
+            // if (countDownMinute < 0) {
+            //     clearInterval(countDown);
+            //     clearInterval(progressBar);
+            //     showScoreAndStoreName();
+            // }
+            timerCounter--;
+            if (timerCounter < 0) {
+                clearInterval(countDown);
+                clearInterval(progressBar);
+                showScoreAndStoreName();
+            }
+        }, 1000);
+        progressBar = setInterval(function () {
+            $(".progress-bar").css("width", progressBarPercent + "%");
+            progressBarPercent = progressBarPercent - 0.03333;
+        }, 40);
     });
 
     //user click answer button
@@ -90,7 +117,8 @@ $(document).ready(function () {
         if (questionsAndAnswers.answers[questionCounter] === $(this).val()) {
             scoreCounter++;
         } else {
-
+            progressBarPercent = progressBarPercent - 8.3333;
+            timerCounter = timerCounter - 10;
         }
 
         //go to next question
@@ -132,31 +160,14 @@ $(document).ready(function () {
         scoreDiv.empty();
     });
 
-    //display timer and update progress bar
-    var countDown = setInterval(function () {
-        $("#timer").text(countDownMinute + "m" + countDownSecond + "s");
-        countDownSecond--;
-        if (countDownSecond < 0) {
-            countDownSecond = 59;
-            countDownMinute--;
-        }
-        if (countDownMinute < 0) {
-            clearInterval(countDown);
-            clearInterval(progressBar);
-            showScoreAndStoreName();
-        }
-    }, 1000);
-    var progressBar = setInterval(function () {
-        $(".progress-bar").css("width", progressBarPercent + "%");
-        progressBarPercent = progressBarPercent - 0.03472;
-    }, 41.6);
+
 
     //show a list of user name and score. a button to clear all
     function displayAllUsersScore() {
         $("form").addClass("d-none");
         changeQuestion.text("High scores");
         for (i = 0; i < allUserName.length; i++) {
-            scoreDiv.append("<p>Name: " + allUserName[i] + "......" + "Score: " + allUserScore[i] + "</p>");
+            scoreDiv.append("<p>Name: " + allUserName[i] + " ...... " + "Score: " + allUserScore[i] + "</p>");
         }
         var clearAllBtn = $("<button>");
         clearAllBtn.addClass("btn btn-primary clearAll");
