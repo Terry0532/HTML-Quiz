@@ -115,9 +115,12 @@ $(document).ready(function () {
     //user click answer button
     btnDiv.on("click", ".userChoice", function () {
         //check if this is the currect answer
+        //correct answer +1 score
         if (questionsAndAnswers.answers[questionCounter] === $(this).val()) {
             scoreCounter++;
-        } else {
+        } 
+        //incorrect answer will subtract 10 seconds
+        else {
             progressBarPercent = progressBarPercent - 8.3333;
             timerCounter = timerCounter - 10;
         }
