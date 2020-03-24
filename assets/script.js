@@ -6,6 +6,7 @@ $(document).ready(function () {
     var btnDiv = $("#btnDiv");
     var scoreDiv = $("#userScores");
     var clearBtnDiv = $("#clear");
+    var reloadBtnDiv = $("#reload");
     var progressBarPercent = 100;
     // var countDownMinute = 2;
     // var countDownSecond = 0;
@@ -160,7 +161,9 @@ $(document).ready(function () {
         scoreDiv.empty();
     });
 
-
+    reloadBtnDiv.on("click", ".reload", function () {
+        location.reload();
+    });
 
     //show a list of user name and score. a button to clear all
     function displayAllUsersScore() {
@@ -169,10 +172,18 @@ $(document).ready(function () {
         for (i = 0; i < allUserName.length; i++) {
             scoreDiv.append("<p>Name: " + allUserName[i] + " ...... " + "Score: " + allUserScore[i] + "</p>");
         }
+
+        //add a clear everything button to the high score page
         var clearAllBtn = $("<button>");
-        clearAllBtn.addClass("btn btn-primary clearAll");
+        clearAllBtn.addClass("btn btn-primary mb-3 clearAll");
         clearAllBtn.text("Clear everything");
         clearBtnDiv.append(clearAllBtn);
+
+        //add a reload button to the high score page
+        var reloadBtn = $("<button>");
+        reloadBtn.addClass("btn btn-primary reload");
+        reloadBtn.text("Start again");
+        reloadBtnDiv.append(reloadBtn);
     }
 
     //show question's choices
