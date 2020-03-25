@@ -2,19 +2,33 @@ $(document).ready(function () {
 
     var questionCounter = 0;
     var scoreCounter = 0;
+
     var changeQuestion = $("#question");
     var btnDiv = $("#btnDiv");
     var scoreDiv = $("#userScores");
     var clearBtnDiv = $("#clear");
     var reloadBtnDiv = $("#reload");
+
+    //set the timer for the quiz
+    var countDownMinute = 2;
+    var countDownSecond = 0;
+    
+    var totalSeconds = countDownSecond + countDownMinute * 60;
     var progressBarPercent = 100;
-    // var countDownMinute = 2;
-    // var countDownSecond = 0;
-    var timerCounter = 120;
-    var allUserName = [];
-    var allUserScore = [];
+    var progressBarPercentMinus = (100 / totalSeconds) / 25;
+
     var countDown;
     var progressBar;
+
+    //set the penalty for wrong answer
+    var penaltySec = 10;
+    var penaltyPercent = (100 / totalSeconds) * 10;
+
+    //for local storage
+    var allUserName = [];
+    var allUserScore = [];
+
+    //all the questions choices and answers
     var questionsAndAnswers = {
         questions: ["Inside which HTML element do we put the JavaScript?",
             "What is the correct JavaScript syntax to change the context of the HTML element below?",
@@ -87,28 +101,23 @@ $(document).ready(function () {
 
         //display timer and update progress bar
         countDown = setInterval(function () {
-            // $("#timer").text(countDownMinute + "m" + countDownSecond + "s");
-            $("#timer").text(timerCounter + "s");
-            // countDownSecond--;
-            // if (countDownSecond < 0) {
-            //     countDownSecond = 59;
-            //     countDownMinute--;
-            // }
-            // if (countDownMinute < 0) {
-            //     clearInterval(countDown);
-            //     clearInterval(progressBar);
-            //     showScoreAndStoreName();
-            // }
-            timerCounter--;
-            if (timerCounter < 0) {
+            countDownSecond--;
+            if (countDownSecond < 0) {
+                countDownSecond = 59;
+                countDownMinute--;
+            }
+            if (countDownMinute < 0) {
+                $("#timer").empty();
                 clearInterval(countDown);
                 clearInterval(progressBar);
                 showScoreAndStoreName();
+            } else {
+                $("#timer").text(countDownMinute + "m" + countDownSecond + "s");
             }
         }, 1000);
         progressBar = setInterval(function () {
             $(".progress-bar").css("width", progressBarPercent + "%");
-            progressBarPercent = progressBarPercent - 0.03333;
+            progressBarPercent = progressBarPercent - progressBarPercentMinus;
         }, 40);
     });
 
@@ -118,11 +127,17 @@ $(document).ready(function () {
         //correct answer +1 score
         if (questionsAndAnswers.answers[questionCounter] === $(this).val()) {
             scoreCounter++;
-        } 
-        //incorrect answer will subtract 10 seconds
+        }
+
+        //incorrect answer will subtract whatever seconds in penaltySec variable
         else {
-            progressBarPercent = progressBarPercent - 8.3333;
-            timerCounter = timerCounter - 10;
+            progressBarPercent = progressBarPercent - penaltyPercent;
+            countDownSecond = countDownSecond - penaltySec;
+            if (countDownSecond < 0) {
+                var temp = Math.abs(countDownSecond);
+                countDownSecond = 60 - temp;
+                countDownMinute = countDownMinute - 1;
+            }
         }
 
         //go to next question
